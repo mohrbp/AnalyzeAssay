@@ -1,10 +1,11 @@
-subtract_background_kinetic <- function(kdat, mean_signal = avg_RFU, 
-                                        NameofBackgroundSignal = "noDNA", 
+#' @export
+subtract_background_kinetic <- function(kdat, mean_signal = avg_RFU,
+                                        NameofBackgroundSignal = "noDNA",
                                         groups = c("minutes")){
-  # subtracting the baseline per minute; references a DNA name. 
+  # subtracting the baseline per minute; references a DNA name.
   kdat %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(across(groups)) %>%
+    dplyr::group_by(dplyr::across(groups)) %>%
     dplyr::mutate(bck_sub_RFU = {{mean_signal}} - {{mean_signal}}[DNA == NameofBackgroundSignal])
 }
 
