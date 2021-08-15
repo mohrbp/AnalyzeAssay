@@ -1,3 +1,9 @@
+#' Normalize
+#'
+#' Divides all kinetic signals by a single kinetic signal. If the largest signal is chosen, makes all signals between 0-1.
+#'
+#' @param kdat long kinetic data table with central tendencies calculated
+#' @return a long kinetic data table with all values normalized to "Normal"
 #' @export
 normalizetoSignal <- function(kdat){
 
@@ -9,6 +15,15 @@ normalizetoSignal <- function(kdat){
                  )
 }
 
+
+#' Find Biggest Signal
+#'
+#' Finds the maximum intensity of a single signal
+#'
+#' @param kinetic_dataframe Data frame of
+#' @param mean_RFUs Column name of signal
+#' @param Normal Signal to find maximum of, defaults to maximum signal.
+#' @return
 #' @export
 find_biggest_signal <- function(kinetic_dataframe,
                                 mean_RFUs = "avg_RFU",

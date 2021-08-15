@@ -1,4 +1,12 @@
-#' @export
+#' Import and make long
+#'
+#' Imports wide kinetic data from excel files and binds the identifying information. Returns long data.
+#'
+#' @param excels A list of path names to the kinetic data to be imported
+#' @param id A path to the file of identifiers for the kinetic data
+#' @return A long kinetic data table of all of the input kinetic data bound to the identifying information provided by Ids.
+#'
+#'   @export
 import_kinetic <- function(excels = c("yymmdd_run_1A","yymmdd_run_1B"),
                            ids = identifiers){
 
@@ -11,6 +19,14 @@ import_kinetic <- function(excels = c("yymmdd_run_1A","yymmdd_run_1B"),
     dplyr::bind_rows()
 }
 
+
+#' Make long and join
+#'
+#' Makes kinetic data long and joins with descriptive variables
+#'
+#' @param fl_dat A wide data table of Assay data by well and time
+#' @param ids A long data table of descriptive variables for each Assay well
+#' @return A data table of
 #' @export
 join_Txtl <- function(fl_dat,
                       ids){
