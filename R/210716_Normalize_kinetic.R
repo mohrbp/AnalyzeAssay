@@ -22,8 +22,8 @@ normalizetoSignal <- function(kdat){
 #'
 #' @param kinetic_dataframe Data frame of
 #' @param mean_RFUs Column name of signal
-#' @param Normal Signal to find maximum of, defaults to maximum signal.
-#' @return
+#' @param Normal Name of the normalization signal. Defaults to the name of the largest signal
+#' @return A vector, the max intensity of the normalization
 #' @export
 find_biggest_signal <- function(kinetic_dataframe,
                                 mean_RFUs = "avg_RFU",
@@ -37,6 +37,16 @@ find_biggest_signal <- function(kinetic_dataframe,
     dplyr::pull(max_RFU)
 }
 
+#' Make signal relative
+#'
+#'
+#' Divides all signals by a chosen signal to show relative intensity. Useful for normalizing over several experiments.
+#'
+#' @param kinetic_dataframe A data frame containing kinetic data
+#' @param mean_RFUs Name of the signal intensity
+#' @param stnd_dev_RFUs Name of the standard deviation of the dereplicated signal intensity
+#' @param max_RFU A vector, the max intensity of the normalization signal
+#' @return df with intensity divided by the maximum intensity of the normalization signal
 #' @export
 normalize_TxTl <- function(kinetic_dataframe,
                            mean_RFUs = avg_RFU,

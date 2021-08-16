@@ -6,7 +6,7 @@
 #' @param id A path to the file of identifiers for the kinetic data
 #' @return A long kinetic data table of all of the input kinetic data bound to the identifying information provided by Ids.
 #'
-#'   @export
+#' @export
 import_kinetic <- function(excels = c("yymmdd_run_1A","yymmdd_run_1B"),
                            ids = identifiers){
 

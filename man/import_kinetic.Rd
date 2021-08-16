@@ -13,8 +13,6 @@ import_kinetic(excels = c("yymmdd_run_1A", "yymmdd_run_1B"), ids = identifiers)
 }
 \value{
 A long kinetic data table of all of the input kinetic data bound to the identifying information provided by Ids.
-
-@export
 }
 \description{
 Imports wide kinetic data from excel files and binds the identifying information. Returns long data.
