@@ -1,22 +1,23 @@
 #' Subtracts a background signal from all other signals
 #'
 #'
-#' @param kdat A df of Assay data
-#' @param mean_signal The colname of the Assay intensity signal
-#' @param NameofBackgroundSignal The protein name of the signal to subtract from all other signals
+#' @param AssayDat A df of Assay data
+#' @param Signal The colname of the Assay intensity signal
+#' @param GroupBy The names of the variables over which the assay data is separated. Defaults to minutes, cannot include BackgroundSignalType variable.
+#' @param NameofBackgroundSignal The name of the signal to subtract from all other signals
+#' @param BackgroundSignalType The variable type of the signal to subtract from all other signals
 #' @return A df of Assay data with the intensity of the Background Signal subtracted
 #' @export
-subtract_background_kinetic <- function(kdat, mean_signal = avg_RFU,
-                                        NameofBackgroundSignal = "noDNA",
-                                        groups = c("minutes")){
+subtract_background <- function(AssayDat,
+                                Signal = mean_signal,
+                                GroupBy = c("minutes"),
+                                NameofBackgroundSignal = "noDNA",
+                                BackgroundSignalType = DNA
+                                ){
   # subtracting the baseline per minute; references a DNA name.
-  kdat %>%
+  AssayDat %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(dplyr::across(groups)) %>%
-    dplyr::mutate(bck_sub_RFU = {{mean_signal}} - {{mean_signal}}[DNA == NameofBackgroundSignal])
+    dplyr::group_by(dplyr::across(GroupBy)) %>%
+    dplyr::mutate(bck_sub_signal = {{Signal}} - {{Signal}}[{{BackgroundSignalType}} == NameofBackgroundSignal]
+    )
 }
-
-
-#need to test this line to generalize
-#function(kdat, mean_signal = avg_RFU, NameofBackgroundSignal = "noDNA", BackgroundSampleType = "DNA", groups = c("minutes"))
-# dplyr::mutate(bck_sub_RFU = {{mean_signal}} - {{mean_signal}}[{{BackgroundSampleType}} == NameofBackgroundSignal])
