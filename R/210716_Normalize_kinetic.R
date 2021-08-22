@@ -1,40 +1,31 @@
-#' Normalize
+#' Normalize signal intensity
 #'
-#' Divides all kinetic signals by a single kinetic signal. If the largest signal is chosen, makes all signals between 0-1.
+#' Divides all signals by a single signal. Defaults to the largest signal and makes all signals between 0-1.
 #'
-#' @param kdat long kinetic data table with central tendencies calculated
-#' @return a long kinetic data table with all values normalized to "Normal"
+#' @param AssayDat Df of the long data table input file
+#' @param Signal The quoted column name of the assay intensity signal
+#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
+#' @param NormalizationSignalType The variable type of the signal to divide all other signals
+#' @param GroupBy The names of the variables over which the assay data is separated including minutes. Defaults to DNA, protein and minutes.
+#'  @return long Df of all signals divided by the maximum value of the chosen signal
 #' @export
-normalizetoSignal <- function(kdat){
+normalize.bysignal <- function(AssayDat,
+                              Signal = "BckSubSignal",
+                              NameofNormalizationSignal = NULL,
+                              NormalizationSignalType = NULL,
+                              GroupBy = c("DNA", "minutes", "protein")
+                              ) {
+  AssayDat %>%
+    dplyr::group_by(dplyr::across(GroupBy)) %>%
+    normalize.byvalue(Signal = Signal,
+                      Value = find.maxsignal(
+                    .,
+                    Signal = {{Signal}},
+                    NameofNormalizationSignal,
+                    {{NormalizationSignalType}}
+                   )
+    )
 
-  kdat %>%
-  normalize_TxTl(mean_RFUs = bck_sub_RFU,
-                 max_RFU = find_biggest_signal(.,
-                                               mean_RFUs = bck_sub_RFU,
-                                               Normal = "BLAP protease")
-                 )
-}
-
-
-#' Find Biggest Signal
-#'
-#' Finds the maximum intensity of a single signal
-#'
-#' @param kinetic_dataframe Data frame of
-#' @param mean_RFUs Column name of signal
-#' @param Normal Name of the normalization signal. Defaults to the name of the largest signal
-#' @return A vector, the max intensity of the normalization
-#' @export
-find_biggest_signal <- function(kinetic_dataframe,
-                                mean_RFUs = "avg_RFU",
-                                Normal = NULL) {
-  #ungroup to remove by-minute, filter is applied conditionally. If Normal isn't a protein name, will return
-  #max "mean_RFUs" for all proteins
-  kinetic_dataframe %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(if (is.null(Normal) == FALSE) protein == Normal else TRUE) %>%
-    dplyr::summarise(max_RFU = max({{mean_RFUs}})) %>%
-    dplyr::pull(max_RFU)
 }
 
 #' Make signal relative
@@ -42,17 +33,47 @@ find_biggest_signal <- function(kinetic_dataframe,
 #'
 #' Divides all signals by a chosen signal to show relative intensity. Useful for normalizing over several experiments.
 #'
-#' @param kinetic_dataframe A data frame containing kinetic data
-#' @param mean_RFUs Name of the signal intensity
-#' @param stnd_dev_RFUs Name of the standard deviation of the dereplicated signal intensity
-#' @param max_RFU A vector, the max intensity of the normalization signal
-#' @return df with intensity divided by the maximum intensity of the normalization signal
+#' @param AssayDat A data frame containing long assay data
+#' @param Signal Column name of the assay data to transform
+#' @param Value A vector to divide the Signal by. Defaults to maximum value of selected Signal
+#' @return Df with intensity divided by the maximum intensity of the normalization signal
 #' @export
-normalize_TxTl <- function(kinetic_dataframe,
-                           mean_RFUs = avg_RFU,
-                           stnd_dev_RFUs = sd_RFU,
-                           max_RFU){
-  kinetic_dataframe %>%
-    dplyr::mutate(relative_RFU = {{mean_RFUs}}/max_RFU,
-           relative_stnd_dev = {{stnd_dev_RFUs}}/max_RFU)
+normalize.byvalue <- function(AssayDat,
+                              Signal = Signal,
+                              Value = MaxSignal
+) {
+  Signal <- (as.name(Signal))
+  AssayDat %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(NormalizedSignal = {{Signal}}/Value)
 }
+
+
+#' Find Biggest Signal
+#'
+#' Finds the maximum intensity of a single signal.
+#' If NameofNormalizationSignal is Null, will return the max Signal for the enter Df.
+#'
+#' @param AssayDat Df of the long data table input file
+#' @param Signal Column name of signal
+#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
+#' @param NormalizationSignalType The variable type of the signal to divide all other signals
+#' @return A vector, the max intensity of the normalization
+#' @export
+find.maxsignal <- function(AssayDat,
+                                Signal = Signal,
+                                NameofNormalizationSignal = NULL,
+                                NormalizationSignalType = NULL
+                                ) {
+
+  Signal <- (as.name(Signal))
+
+  #ungroup to remove by-minute, filter is applied conditionally.
+  AssayDat %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(if (is.null(NameofNormalizationSignal) == FALSE) {{NormalizationSignalType}} == NameofNormalizationSignal else TRUE) %>%
+    dplyr::summarise(MaxSignal = max({{Signal}})) %>%
+    dplyr::pull(.data$MaxSignal)
+}
+
+

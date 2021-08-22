@@ -4,20 +4,19 @@
 #' @param AssayDat A df of Assay data
 #' @param Signal The colname of the Assay intensity signal
 #' @param GroupBy The names of the variables over which the assay data is separated. Defaults to minutes, cannot include BackgroundSignalType variable.
-#' @param NameofBackgroundSignal The name of the signal to subtract from all other signals
+#' @param NameofBackgroundSignal The quoted name of the signal to subtract from all other signals
 #' @param BackgroundSignalType The variable type of the signal to subtract from all other signals
 #' @return A df of Assay data with the intensity of the Background Signal subtracted
 #' @export
-subtract_background <- function(AssayDat,
-                                Signal = mean_signal,
+subtract.background <- function(AssayDat,
+                                Signal = MeanSignal,
                                 GroupBy = c("minutes"),
                                 NameofBackgroundSignal = "noDNA",
                                 BackgroundSignalType = DNA
-                                ){
+                                ) {
   # subtracting the baseline per minute; references a DNA name.
   AssayDat %>%
-    dplyr::ungroup() %>%
     dplyr::group_by(dplyr::across(GroupBy)) %>%
-    dplyr::mutate(bck_sub_signal = {{Signal}} - {{Signal}}[{{BackgroundSignalType}} == NameofBackgroundSignal]
+    dplyr::mutate(BckSubSignal = {{Signal}} - {{Signal}}[{{BackgroundSignalType}} == NameofBackgroundSignal]
     )
 }

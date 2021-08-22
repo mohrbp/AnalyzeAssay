@@ -4,16 +4,16 @@
 #'
 #' @param PathtoDatInfile A list of path names to the assay data to be imported.
 #' @param PathtoIds A path to the file of identifiers for the assay data.
-#' @param ColstoExclude Pass into MakeLongandJoin.Columns not made long.
-#' @param By Pass into MakeLongandJoin. Key to join assay data and identifiers.
+#' @param ColstoExclude Pass into make.long.join Columns not made long.
+#' @param By Pass into make.long.join. Key to join assay data and identifiers.
 #' @return A long assay data table of all of the input assay data bound to the identifying information provided by Ids.
 #'
 #' @export
-Import_AssayDat <- function(PathtoDatInfile,
+import.assaydat <- function(PathtoDatInfile,
                            PathtoIds,
                            ColstoExclude = c("minutes"),
                            By = "well"
-                           ){
+                           ) {
 
   #import excels based on file path, must be path from working directory
   #Adds info stored in identifiers
@@ -21,7 +21,7 @@ Import_AssayDat <- function(PathtoDatInfile,
 
   Identifiers <- read_excel(PathtoIds)
   purrr::map(.x = PathtoDatInfile, .f = readxl::read_xlsx) %>%
-  purrr::map(MakeLongandJoin, Ids = Identifiers, ColstoExclude = ColstoExclude, By = By) %>%
+  purrr::map(make.long.join, Ids = Identifiers, ColstoExclude = ColstoExclude, By = By) %>%
     dplyr::bind_rows()
 }
 
@@ -36,13 +36,12 @@ Import_AssayDat <- function(PathtoDatInfile,
 #' @param By Names of the location variable and key for joining identifiers to Assay data; defaults to "well".
 #' @return A data table of assay data bound to the descriptive variables in the identifiers file.
 #' @export
-MakeLongandJoin <- function(AssayDat,
+make.long.join <- function(AssayDat,
                       Ids,
                       ColstoExclude = c("minutes"),
                       By = c("well")
-                      )
-                      {
+                      ) {
   AssayDat %>%
-    tidyr::pivot_longer(cols = -(ColstoExclude), names_to = By, values_to = "intensity") %>%
+    tidyr::pivot_longer(cols = -(ColstoExclude), names_to = By, values_to = "Intensity") %>%
     dplyr::left_join(Ids, by = By)
 }

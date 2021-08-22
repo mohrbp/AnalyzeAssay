@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^R/210717_GFPCalibration.R$
+^R/210716_SummarizeKinetic.R$
+^R/210716_CalibrationCurve.R$
