@@ -10,12 +10,12 @@
 #' @export
 
 dereplicate <- function(AssayDat,
-                        GroupBy = c("DNA", "minutes", "protein"),
+                        GroupBy = c("DNA", "Minutes", "Protein"),
                         Signal = Intensity,
                         Method = "CT") {
   #computes stats of central tendency; averages technical replicates
 
-  if(Method == "CT") {
+  if (Method == "CT") {
   AssayDat %>%
     dplyr::group_by(dplyr::across(GroupBy)) %>%
     dplyr::summarise(MeanSignal = mean({{Signal}}),

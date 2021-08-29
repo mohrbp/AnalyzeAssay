@@ -13,7 +13,7 @@ normalize.bysignal <- function(AssayDat,
                               Signal = "BckSubSignal",
                               NameofNormalizationSignal = NULL,
                               NormalizationSignalType = NULL,
-                              GroupBy = c("DNA", "minutes", "protein")
+                              GroupBy = c("DNA", "Minutes", "Protein")
                               ) {
   AssayDat %>%
     dplyr::group_by(dplyr::across(GroupBy)) %>%
@@ -73,7 +73,7 @@ find.maxsignal <- function(AssayDat,
     dplyr::ungroup() %>%
     dplyr::filter(if (is.null(NameofNormalizationSignal) == FALSE) {{NormalizationSignalType}} == NameofNormalizationSignal else TRUE) %>%
     dplyr::summarise(MaxSignal = max({{Signal}})) %>%
-    dplyr::pull(.data$MaxSignal)
+    dplyr::pull(MaxSignal)
 }
 
 

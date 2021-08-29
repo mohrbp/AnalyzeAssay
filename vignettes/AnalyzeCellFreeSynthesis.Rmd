@@ -1,0 +1,153 @@
+---
+title: "Analyze Cell-Free Synthesis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AnalyzeCellFreeSynthesis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup}
+library(AnalyzeAssay)
+```
+This package is designed to aid in analyzing assay data from well plate experiments. It specifically focuses on analyzing kinetic cell-free protein synthesis data and this will be the focus of this vignette. The basic functions this package performs are:
+
+* Averaging replicates
+* Subtracting a background or baseline signal
+* Normalizing all signals to a chosen signal
+
+This package requires the tidyverse environment. Begin by installing or loading tidyverse
+```{r}
+library(tidyverse)
+```
+
+```{r, include = FALSE}
+#set a theme for plots
+ggplot2::theme_set(theme_minimal())
+```
+
+## Importing and formatting
+
+Assay data is imported as two files. A file of data by well plate location and a file of identifying characteristics of the data (i.e. which proteins, DNAs, or Cell-free systems were used). Two sample data sets are available.
+
+Assay data and identifiers are loaded into the workspace and merged with `import.assaydat`. This function takes the file path of the two input files. 
+
+```{r}
+system.file("extdata", "Data_1.xlsx", package = "AnalyzeAssay") -> PathtoDatInfile
+system.file("extdata", "Data_1_Ids.xlsx", package = "AnalyzeAssay") -> PathtoIds
+```
+
+By default, the `Minutes` column of the assay data is not pivoted longer and data are join by `Well`. This function requires the `readxl` function to import xlsx notebooks. The returned file is kinetic data in a long format for analysis.
+
+```{r}
+library(readxl)
+import.assaydat(PathtoDatInfile,
+                PathtoIds
+                ) -> AssayDat
+head(AssayDat)
+```
+
+Assay statistics are then calculated with `dereplicate`. Mean, standard deviation, and the 95% confidence internval of the mean are calculated by default. GroupBy sets the variables names by which the statistics are calcualted; defaults are "DNA", "Protein" and "Minutes", others may include "Extract" or "CFS". The method `"MM"` can be called to calculate Max and Min instead. 
+```{r}
+#Rows containing replicates are collapsed and new columns are made for the calculated stats.
+
+dereplicate(AssayDat,
+            GroupBy = c("DNA", "Protein", "Minutes")
+            ) -> AssayDat
+head(AssayDat)
+```
+
+Dereplicated data can be directly plotted with `ggplot` which is included in the tidyverse environment. It may be illustrative to plot a subset of data, such as control proteins.
+```{r, fig.width = 5}
+#tidyverse filter a subset of the data
+AssayDat %>% 
+  filter(Protein %in% c("A", "B", "C", "D","E")) -> SubsetAssayDat
+
+ggplot2::ggplot(SubsetAssayDat, 
+       aes(x = Minutes,
+           y = MeanSignal,
+           color = Protein)
+       ) + 
+geom_point()
+``` 
+
+## Subtracting background signal
+
+It can be useful to subtract a single signal from all out signals. In `background.signal`, the signal variable is selected with `BackgroundSignalType` and the chosen conditions is provided as quoted text to `NameofBackgroundSignal`. 
+
+```{r, fig.width = 5}
+subtract.background(SubsetAssayDat,
+                    Signal = MeanSignal,
+                    GroupBy = "Minutes",
+                    BackgroundSignalType = Protein,
+                    NameofBackgroundSignal = "B") -> BackgroundSubtracted_SubsetAssayDat
+
+#Generates another column of BckSubSignal, which can be called in subsequent analyses or ggplot
+head(BackgroundSubtracted_SubsetAssayDat)
+
+ggplot2::ggplot(BackgroundSubtracted_SubsetAssayDat, 
+       aes(x = Minutes,
+           y = BckSubSignal,
+           color = Protein)
+       ) + 
+geom_point()
+```
+
+## Normalization
+
+Normalizing signal intensity can be helpful when comparing data sets.  
+
+```{r, fig.width = 5}
+#Generate two Assay Data subsets 
+AssayDat %>% 
+  filter(Protein %in% c("A", "B", "C", "D","E")) -> Subset1
+AssayDat %>% 
+  filter(Protein %in% c("AA", "AB", "AC", "AD", "AE")) -> Subset2
+
+ggplot2::ggplot(Subset1, 
+       aes(x = Minutes,
+           y = MeanSignal,
+           color = Protein)
+       ) + 
+geom_point()
+ggplot2::ggplot(Subset2, 
+       aes(x = Minutes,
+           y = MeanSignal,
+           color = Protein)
+       ) + 
+geom_point()
+```
+
+
+`normalize.bysignal` takes a signal type and the name of the signal and divides all the signals by the chosen signal. `GroupBy` can be used to normalize over a variables, Minutes is selected for kinetic data by default.
+```{r, fig.width = 5}
+#Combine the two data sets
+AssayDat %>% 
+  filter(Protein %in% c("A", "B", "C", "D","E", "AA", "AB", "AC", "AD", "AE")) -> SubsetAssayDat
+
+#Normalize to the highest signal in the first plot.
+normalize.bysignal(SubsetAssayDat,
+                   Signal = "MeanSignal",
+                   GroupBy = "Minutes",
+                   NormalizationSignalType = Protein,
+                   NameofNormalizationSignal = "C") -> Normalized_SubsetAssayDat
+
+#Generates another column of NormalizedSignal, which can be called in subsequent analyses or ggplot
+head(Normalized_SubsetAssayDat)
+
+ggplot2::ggplot(Normalized_SubsetAssayDat, 
+       aes(x = Minutes,
+           y = NormalizedSignal,
+           color = Protein)
+       ) + 
+geom_point()
+```
+

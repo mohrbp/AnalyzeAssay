@@ -11,15 +11,15 @@
 #' @export
 import.assaydat <- function(PathtoDatInfile,
                            PathtoIds,
-                           ColstoExclude = c("minutes"),
-                           By = "well"
+                           ColstoExclude = c("Minutes"),
+                           By = "Well"
                            ) {
 
   #import excels based on file path, must be path from working directory
   #Adds info stored in identifiers
   #Pivots non-minutes columns long and joins all files to a single df
 
-  Identifiers <- read_excel(PathtoIds)
+  Identifiers <- readxl::read_xlsx(PathtoIds)
   purrr::map(.x = PathtoDatInfile, .f = readxl::read_xlsx) %>%
   purrr::map(make.long.join, Ids = Identifiers, ColstoExclude = ColstoExclude, By = By) %>%
     dplyr::bind_rows()
@@ -38,8 +38,8 @@ import.assaydat <- function(PathtoDatInfile,
 #' @export
 make.long.join <- function(AssayDat,
                       Ids,
-                      ColstoExclude = c("minutes"),
-                      By = c("well")
+                      ColstoExclude = c("Minutes"),
+                      By = c("Well")
                       ) {
   AssayDat %>%
     tidyr::pivot_longer(cols = -(ColstoExclude), names_to = By, values_to = "Intensity") %>%

@@ -20,8 +20,10 @@ Imports:
     purrr,
     readxl,
     stats,
-    tidyr
+    tidyr,
+    ggplot2
 Suggests: 
     rmarkdown,
-    knitr
+    knitr,
+    tidyverse
 VignetteBuilder: knitr

@@ -10,7 +10,7 @@
 #' @export
 subtract.background <- function(AssayDat,
                                 Signal = MeanSignal,
-                                GroupBy = c("minutes"),
+                                GroupBy = c("Minutes"),
                                 NameofBackgroundSignal = "noDNA",
                                 BackgroundSignalType = DNA
                                 ) {
