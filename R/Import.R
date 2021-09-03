@@ -43,5 +43,5 @@ make.long.join <- function(AssayDat,
                       ) {
   AssayDat %>%
     tidyr::pivot_longer(cols = -(ColstoExclude), names_to = By, values_to = "Intensity") %>%
-    dplyr::left_join(Ids, by = By)
+    dplyr::right_join(Ids, by = By)
 }
