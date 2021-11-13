@@ -4,12 +4,19 @@
 \alias{normalize.byvalue}
 \title{Make signal relative}
 \usage{
-normalize.byvalue(AssayDat, Signal = Signal, Value = MaxSignal)
+normalize.byvalue(
+  AssayDat,
+  Signal = Signal,
+  SignalStat = SignalStat,
+  Value = MaxSignal
+)
 }
 \arguments{
 \item{AssayDat}{A data frame containing long assay data}
 
 \item{Signal}{Column name of the assay data to transform}
+
+\item{SignalStat}{Column name of the assay statistics data to transform}
 
 \item{Value}{A vector to divide the Signal by. Defaults to maximum value of selected Signal}
 }

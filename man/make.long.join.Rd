@@ -11,9 +11,9 @@ make.long.join(AssayDat, Ids, ColstoExclude = c("Minutes"), By = c("Well"))
 
 \item{Ids}{A long data table of descriptive variables for each assay well.}
 
-\item{ColstoExclude}{Colnames of columns not to make long, defaults to "minutes" for kinetic data.}
+\item{ColstoExclude}{Colnames of columns not to make long, defaults to "Minutes" for kinetic data.}
 
-\item{By}{Names of the location variable and key for joining identifiers to Assay data; defaults to "well".}
+\item{By}{Names of the location variable and key for joining identifiers to Assay data; defaults to "Well".}
 }
 \value{
 A data table of assay data bound to the descriptive variables in the identifiers file.

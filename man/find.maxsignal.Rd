@@ -7,8 +7,8 @@
 find.maxsignal(
   AssayDat,
   Signal = Signal,
-  NameofNormalizationSignal = NULL,
-  NormalizationSignalType = NULL
+  NormalizationSignalType = NULL,
+  NameofNormalizationSignal = NULL
 )
 }
 \arguments{
@@ -16,9 +16,9 @@ find.maxsignal(
 
 \item{Signal}{Column name of signal}
 
-\item{NameofNormalizationSignal}{The quoted name of the signal to divide all other signals}
-
 \item{NormalizationSignalType}{The variable type of the signal to divide all other signals}
+
+\item{NameofNormalizationSignal}{The quoted name of the signal to divide all other signals}
 }
 \value{
 A vector, the max intensity of the normalization

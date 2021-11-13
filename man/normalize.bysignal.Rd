@@ -7,8 +7,9 @@
 normalize.bysignal(
   AssayDat,
   Signal = "BckSubSignal",
-  NameofNormalizationSignal = NULL,
+  SignalStat = "SDSignal",
   NormalizationSignalType = NULL,
+  NameofNormalizationSignal = NULL,
   GroupBy = c("DNA", "Minutes", "Protein")
 )
 }
@@ -17,11 +18,13 @@ normalize.bysignal(
 
 \item{Signal}{The quoted column name of the assay intensity signal}
 
-\item{NameofNormalizationSignal}{The quoted name of the signal to divide all other signals}
+\item{SignalStat}{The quoted column name ofsecond signal to normalize. Often the Standard Deviation}
 
 \item{NormalizationSignalType}{The variable type of the signal to divide all other signals}
 
-\item{GroupBy}{The names of the variables over which the assay data is separated including minutes. Defaults to DNA, protein and minutes.
+\item{NameofNormalizationSignal}{The quoted name of the signal to divide all other signals}
+
+\item{GroupBy}{The names of the variables over which the assay data is separated including minutes. Defaults to DNA, Protein and Minutes.
 @return long Df of all signals divided by the maximum value of the chosen signal}
 }
 \description{

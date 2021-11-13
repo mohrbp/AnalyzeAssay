@@ -32,8 +32,8 @@ import.assaydat <- function(PathtoDatInfile,
 #'
 #' @param AssayDat A wide data table of assay data by well and time.
 #' @param Ids A long data table of descriptive variables for each assay well.
-#' @param ColstoExclude Colnames of columns not to make long, defaults to "minutes" for kinetic data.
-#' @param By Names of the location variable and key for joining identifiers to Assay data; defaults to "well".
+#' @param ColstoExclude Colnames of columns not to make long, defaults to "Minutes" for kinetic data.
+#' @param By Names of the location variable and key for joining identifiers to Assay data; defaults to "Well".
 #' @return A data table of assay data bound to the descriptive variables in the identifiers file.
 #' @export
 make.long.join <- function(AssayDat,

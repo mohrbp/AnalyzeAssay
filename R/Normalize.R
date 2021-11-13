@@ -4,29 +4,31 @@
 #'
 #' @param AssayDat Df of the long data table input file
 #' @param Signal The quoted column name of the assay intensity signal
-#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
+#' @param SignalStat The quoted column name ofsecond signal to normalize. Often the Standard Deviation
 #' @param NormalizationSignalType The variable type of the signal to divide all other signals
-#' @param GroupBy The names of the variables over which the assay data is separated including minutes. Defaults to DNA, protein and minutes.
+#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
+#' @param GroupBy The names of the variables over which the assay data is separated including minutes. Defaults to DNA, Protein and Minutes.
 #'  @return long Df of all signals divided by the maximum value of the chosen signal
 #' @export
 normalize.bysignal <- function(AssayDat,
                               Signal = "BckSubSignal",
-                              NameofNormalizationSignal = NULL,
+                              SignalStat = "SDSignal",
                               NormalizationSignalType = NULL,
+                              NameofNormalizationSignal = NULL,
                               GroupBy = c("DNA", "Minutes", "Protein")
                               ) {
   AssayDat %>%
     dplyr::group_by(dplyr::across(GroupBy)) %>%
     normalize.byvalue(Signal = Signal,
+                      SignalStat = SignalStat,
                       Value = find.maxsignal(
-                    .,
-                    Signal = {{Signal}},
-                    NameofNormalizationSignal,
-                    {{NormalizationSignalType}}
-                   )
+                        .,
+                        Signal = {{Signal}},
+                        NormalizationSignalType = {{NormalizationSignalType}},
+                        NameofNormalizationSignal = NameofNormalizationSignal
+                        )
     )
-
-}
+  }
 
 #' Make signal relative
 #'
@@ -35,17 +37,23 @@ normalize.bysignal <- function(AssayDat,
 #'
 #' @param AssayDat A data frame containing long assay data
 #' @param Signal Column name of the assay data to transform
+#' @param SignalStat Column name of the assay statistics data to transform
 #' @param Value A vector to divide the Signal by. Defaults to maximum value of selected Signal
 #' @return Df with intensity divided by the maximum intensity of the normalization signal
 #' @export
 normalize.byvalue <- function(AssayDat,
                               Signal = Signal,
+                              SignalStat = SignalStat,
                               Value = MaxSignal
-) {
+                              ) {
   Signal <- (as.name(Signal))
+  SignalStat <- (as.name(SignalStat))
+
   AssayDat %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(NormalizedSignal = {{Signal}}/Value)
+    dplyr::mutate(NormalizedSignal = {{Signal}}/Value,
+                  NormalizedSignalStat = {{SignalStat}}/Value
+                  )
 }
 
 
@@ -56,15 +64,15 @@ normalize.byvalue <- function(AssayDat,
 #'
 #' @param AssayDat Df of the long data table input file
 #' @param Signal Column name of signal
-#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
 #' @param NormalizationSignalType The variable type of the signal to divide all other signals
+#' @param NameofNormalizationSignal The quoted name of the signal to divide all other signals
 #' @return A vector, the max intensity of the normalization
 #' @export
 find.maxsignal <- function(AssayDat,
-                                Signal = Signal,
-                                NameofNormalizationSignal = NULL,
-                                NormalizationSignalType = NULL
-                                ) {
+                           Signal = Signal,
+                           NormalizationSignalType = NULL,
+                           NameofNormalizationSignal = NULL
+                           ) {
 
   Signal <- (as.name(Signal))
 

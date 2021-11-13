@@ -136,6 +136,7 @@ AssayDat %>%
 #Normalize to the highest signal in the first plot.
 normalize.bysignal(SubsetAssayDat,
                    Signal = "MeanSignal",
+                   SignalStat = "SDSignal",
                    GroupBy = "Minutes",
                    NormalizationSignalType = Protein,
                    NameofNormalizationSignal = "C") -> Normalized_SubsetAssayDat
@@ -149,5 +150,31 @@ ggplot2::ggplot(Normalized_SubsetAssayDat,
            color = Protein)
        ) + 
 geom_point()
+```
+
+## Reporting
+
+For some studies it is useful to report the maximum value of the data across a time course. `report.assaymax` finds the max value and time at max value and prints those data.
+
+
+```{r, fig.width = 5}
+report.assaymax(AssayDat,
+               GroupBy = c("Protein"),
+               Signal = MeanSignal,
+               SDSignal = SDSignal
+               )
+```
+
+If `SortBy` is used and the path to an identifiers file is provide, the report will be written to a CVS in the order of the identifiers file. This is useful if you want to display controls before other data
+
+```{r, fig.width = 5}
+report.assaymax(Normalized_SubsetAssayDat,
+               GroupBy = c("Protein"),
+               Signal = NormalizedSignal,
+               SDSignal = NormalizedSignalStat,
+               SortBy = PathtoIds,
+               SortGroup = "Protein",
+               Writecsv = FALSE
+               ) 
 ```
 

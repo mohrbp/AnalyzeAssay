@@ -14,7 +14,7 @@ dereplicate(
 \arguments{
 \item{AssayDat}{Df of the long data table input file}
 
-\item{GroupBy}{The names of the variables over which the assay data is separated including minutes. Defaults to DNA, protein and minutes. Should not include "replicate"}
+\item{GroupBy}{The names of the variables over which the assay data is separated including minutes. Defaults to DNA, Protein and Minutes. Should not include "Replicate"}
 
 \item{Signal}{The name of the assay signal being measured.}
 

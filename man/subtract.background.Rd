@@ -8,8 +8,8 @@ subtract.background(
   AssayDat,
   Signal = MeanSignal,
   GroupBy = c("Minutes"),
-  NameofBackgroundSignal = "noDNA",
-  BackgroundSignalType = DNA
+  BackgroundSignalType = DNA,
+  NameofBackgroundSignal = "noDNA"
 )
 }
 \arguments{
@@ -19,9 +19,9 @@ subtract.background(
 
 \item{GroupBy}{The names of the variables over which the assay data is separated. Defaults to minutes, cannot include BackgroundSignalType variable.}
 
-\item{NameofBackgroundSignal}{The quoted name of the signal to subtract from all other signals}
-
 \item{BackgroundSignalType}{The variable type of the signal to subtract from all other signals}
+
+\item{NameofBackgroundSignal}{The quoted name of the signal to subtract from all other signals}
 }
 \value{
 A df of Assay data with the intensity of the Background Signal subtracted
