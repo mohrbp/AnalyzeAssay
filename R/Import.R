@@ -42,6 +42,9 @@ make.long.join <- function(AssayDat,
                       By = c("Well")
                       ) {
   AssayDat %>%
-    tidyr::pivot_longer(cols = -(ColstoExclude), names_to = By, values_to = "Intensity") %>%
+    tidyr::pivot_longer(cols = -(ColstoExclude), 
+                        names_to = By, 
+                        values_to = "Intensity", 
+                        values_transform = list(Intensity = as.numeric)) %>%
     dplyr::right_join(Ids, by = By)
 }
